@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PULSERIG · Premium Hardware</title>
+  
+  <!-- Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              DEFAULT: '#6366f1', // Indigo 500
+              glow: '#818cf8',
+              teal: '#14b8a6',
+              dark: '#030712',    // Gray 950
+              card: '#0f172a',    // Slate 900
+              border: '#1e293b'   // Slate 800
+            }
+          },
+          animation: {
+            'blob': 'blob 7s infinite',
+            'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'fade-in': 'fadeIn 0.4s ease-out forwards',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'shimmer': 'shimmer 2s linear infinite',
+            'bounce-subtle': 'bounceSubtle 3s infinite ease-in-out',
+            'shine': 'shine 4s infinite linear',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'scale(0.95)' },
+              '100%': { opacity: '1', transform: 'scale(1)' },
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-1000px 0' },
+              '100%': { backgroundPosition: '1000px 0' },
+            },
+            bounceSubtle: {
+              '0%, 100%': { transform: 'translateY(-2%)' },
+              '50%': { transform: 'translateY(2%)' },
+            },
+            shine: {
+              '0%': { left: '-100%' },
+              '20%': { left: '200%' },
+              '100%': { left: '200%' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.5); border-radius: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.8); }
+
+    body {
+      background-color: theme('colors.brand.dark');
+      color: theme('colors.slate.200');
+      overflow-x: hidden;
+    }
+
+    /* Ambient Mouse Tracker */
+    #ambient-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: -1;
+      background: radial-gradient(circle 600px at var(--x, 50%) var(--y, 50%), rgba(99, 102, 241, 0.08), transparent 80%);
+      transition: background 0.1s ease;
+    }
+
+    /* Grid Pattern Background */
+    .bg-grid-pattern {
+      background-image: 
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Glassmorphism utilities */
+    .glass {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .glass-nav-scrolled {
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+    }
+
+    /* Animated Underline for Nav Links */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; width: 0; height: 2px;
+      bottom: -4px; left: 0;
+      background: linear-gradient(90deg, theme('colors.brand.DEFAULT'), theme('colors.brand.teal'));
+      transition: width 0.3s ease; border-radius: 2px;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* Button Shine Effect */
+    .btn-shine {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-shine::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+      transform: skewX(-20deg);
+      animation: shine 4s infinite;
+    }
+
+    /* Scroll Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white bg-grid-pattern relative">
+
+  <!-- Ambient Glow -->
+  <div id="ambient-glow"></div>
+
+  <!-- Background static blobs -->
+  <div class="fixed inset-0 z-[-2] overflow-hidden pointer-events-none flex justify-center items-start">
+    <div class="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-brand/10 rounded-full mix-blend-screen filter blur-[120px] animate-blob"></div>
+    <div class="absolute top-[10%] right-[-10%] w-[500px] h-[500px] bg-brand-teal/10 rounded-full mix-blend-screen filter blur-[120px] animate-blob" style="animation-delay: 2s;"></div>
+  </div>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav id="navbar" class="fixed top-0 w-full z-40 transition-all duration-300 bg-transparent border-b border-transparent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20 transition-all duration-300" id="navContainer">
+        
+        <a href="#" class="flex items-center gap-2 group z-50" onclick="window.scrollTo(0,0)">
+          <div class="p-2 bg-gradient-to-br from-brand to-brand-teal rounded-xl group-hover:shadow-[0_0_20px_-5px_rgba(99,102,241,0.6)] group-hover:rotate-12 transition-all duration-300">
+            <i class="ph ph-cpu text-white text-2xl"></i>
+          </div>
+          <span class="font-extrabold text-2xl tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-brand-teal transition-all">
+            PULSE<span class="text-brand-teal">RIG</span>
+          </span>
+        </a>
+
+        <div class="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-300">
+          <a href="#components" class="nav-link hover:text-white transition-colors">Components</a>
+          <a href="#spotlight" class="nav-link hover:text-white transition-colors">Builds</a>
+          <a href="#" class="nav-link hover:text-white transition-colors">Peripherals</a>
+          <a href="#" class="nav-link hover:text-white transition-colors text-brand-teal">Drops <i class="ph ph-fire"></i></a>
+        </div>
+
+        <div class="flex items-center gap-4 sm:gap-6 z-50">
+          <button id="searchOpenBtn" class="text-slate-300 hover:text-white hover:scale-110 transition-all hidden sm:block">
+            <i class="ph ph-magnifying-glass text-2xl"></i>
+          </button>
+          
+          <button id="cartOpenBtn" class="relative p-2 text-slate-300 hover:text-white transition-all group">
+            <i class="ph ph-shopping-cart text-2xl group-hover:scale-110 transition-transform"></i>
+            <span id="cartBadge" class="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-tr from-brand to-brand-glow text-[10px] font-bold text-white shadow-[0_0_10px_rgba(99,102,241,0.6)] border-2 border-brand-dark scale-0 transition-transform duration-300">0</span>
+          </button>
+          
+          <div class="hidden md:block h-6 w-px bg-slate-700"></div>
+          
+          <button class="hidden md:flex items-center justify-center h-10 w-10 rounded-full bg-slate-800 border-2 border-transparent hover:border-brand-teal transition-all overflow-hidden cursor-pointer shadow-lg group">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=transparent" alt="User" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+          </button>
+
+          <!-- MOBILE MENU BUTTON -->
+          <button id="mobileMenuBtn" class="md:hidden text-slate-300 hover:text-white transition-colors p-2 bg-slate-800/50 rounded-lg border border-white/5 relative z-50">
+            <i class="ph ph-list text-2xl transition-transform" id="menuIcon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== FULL SCREEN SEARCH OVERLAY ========== -->
+  <div id="searchOverlay" class="fixed inset-0 z-[100] bg-brand-dark/95 backdrop-blur-2xl opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col pt-32 px-4 sm:px-8 items-center">
+    <button id="searchCloseBtn" class="absolute top-8 right-8 text-slate-400 hover:text-white bg-slate-800/50 p-3 rounded-full border border-white/5 transition-colors">
+      <i class="ph ph-x text-2xl"></i>
+    </button>
+    <div class="w-full max-w-3xl transform translate-y-8 opacity-0 transition-all duration-500 delay-100" id="searchContainer">
+      <div class="relative group">
+        <i class="ph ph-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-brand text-3xl"></i>
+        <input type="text" placeholder="Search for RTX 4090, Ryzen 9..." class="w-full bg-transparent border-b-2 border-slate-700 text-white text-3xl sm:text-5xl font-extrabold py-6 pl-20 pr-4 focus:outline-none focus:border-brand-teal transition-colors placeholder:text-slate-600">
+        <div class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-brand to-brand-teal group-focus-within:w-full transition-all duration-500"></div>
+      </div>
+      <div class="mt-12">
+        <h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Trending Searches</h4>
+        <div class="flex flex-wrap gap-3">
+          <span class="px-4 py-2 rounded-full border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white cursor-pointer transition-colors text-sm font-medium">RTX 4080 Super</span>
+          <span class="px-4 py-2 rounded-full border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white cursor-pointer transition-colors text-sm font-medium">DDR5 RAM</span>
+          <span class="px-4 py-2 rounded-full border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white cursor-pointer transition-colors text-sm font-medium">Liquid Coolers</span>
+          <span class="px-4 py-2 rounded-full border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white cursor-pointer transition-colors text-sm font-medium">OLED Monitors</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MOBILE MENU OVERLAY ========== -->
+  <div id="mobileMenu" class="fixed inset-0 z-30 bg-brand-dark/95 backdrop-blur-2xl transform -translate-y-full transition-transform duration-500 ease-in-out md:hidden pt-28 px-6 flex flex-col border-b border-brand-border/50">
+    <div class="flex-1 flex flex-col gap-6">
+      <a href="#components" class="text-2xl font-bold text-white flex items-center justify-between group menu-item">
+        Components <i class="ph ph-arrow-right text-brand opacity-0 group-hover:opacity-100 transition-opacity"></i>
+      </a>
+      <a href="#spotlight" class="text-2xl font-bold text-white flex items-center justify-between group menu-item">
+        Pre-builds <i class="ph ph-arrow-right text-brand opacity-0 group-hover:opacity-100 transition-opacity"></i>
+      </a>
+      <a href="#" class="text-2xl font-bold text-white flex items-center justify-between group menu-item">
+        Peripherals <i class="ph ph-arrow-right text-brand opacity-0 group-hover:opacity-100 transition-opacity"></i>
+      </a>
+      <a href="#" class="text-2xl font-bold text-brand-teal flex items-center justify-between group menu-item">
+        Drops <i class="ph ph-arrow-right text-brand opacity-0 group-hover:opacity-100 transition-opacity"></i>
+      </a>
+    </div>
+    <div class="pb-10 pt-6 border-t border-slate-800 flex items-center gap-4">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=transparent" alt="User" class="h-12 w-12 rounded-full bg-slate-800 border border-slate-700">
+      <div>
+        <p class="text-white font-semibold">My Account</p>
+        <p class="text-slate-400 text-sm">View orders & profile</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HERO SECTION ========== -->
+  <main class="pt-36 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative reveal active">
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-16 relative">
+      <div class="flex-1 text-center lg:text-left z-10">
+        <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass border-brand/30 text-brand-glow text-sm font-semibold mb-8 shadow-[0_0_30px_rgba(99,102,241,0.2)] hover:border-brand/60 transition-all cursor-default">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-teal"></span>
+          </span>
+          <span class="text-white">RTX 50-Series Architecture Now Live</span>
+        </div>
+        <h1 class="text-5xl sm:text-6xl lg:text-[5rem] font-extrabold text-white leading-[1.05] mb-6 tracking-tight drop-shadow-lg">
+          Dominate with <br />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-brand-glow to-brand-teal filter drop-shadow-[0_0_15px_rgba(20,184,166,0.3)]">Zero Limits.</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-slate-400 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+          Build your ultimate battlestation. Experience unparalleled frame rates and multi-threaded power with our curated premium hardware.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5">
+          <button onclick="document.getElementById('components').scrollIntoView({behavior:'smooth'})" class="btn-shine w-full sm:w-auto px-10 py-4 rounded-xl bg-white text-brand-dark font-extrabold hover:bg-slate-200 hover:scale-[1.03] transition-all duration-300 shadow-[0_0_30px_-5px_rgba(255,255,255,0.4)] flex items-center justify-center gap-2 group">
+            Start Building <i class="ph ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="flex-1 relative w-full max-w-lg lg:max-w-none animate-bounce-subtle">
+        <div class="absolute inset-0 bg-gradient-to-tr from-brand to-brand-teal rounded-[3rem] rotate-6 opacity-20 blur-2xl animate-pulse-slow"></div>
+        <div class="relative z-10 p-2 glass rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] border border-white/10 group overflow-hidden bg-slate-900/50">
+          <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=800&h=600" 
+               alt="Premium PC Build" 
+               class="w-full rounded-[2.5rem] object-cover h-[450px] lg:h-[550px] transform group-hover:scale-105 transition-transform duration-700"
+               onerror="this.onerror=null; this.src=generateFallbackSVG('Rig', 'desktop'); this.style.padding='4rem'; this.style.objectFit='contain';">
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========== SPOTLIGHT: BUILD OF THE MONTH ========== -->
+  <section id="spotlight" class="py-24 relative overflow-hidden border-y border-white/5 bg-slate-900/40 reveal">
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-brand/5 to-transparent pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex items-center gap-4 mb-12">
+        <div class="h-px w-12 bg-brand-teal"></div>
+        <span class="text-brand-teal font-bold tracking-widest uppercase text-sm">Spotlight Showcase</span>
+      </div>
+      
+      <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <div class="flex-1 w-full relative group cursor-pointer">
+          <div class="absolute inset-0 bg-brand blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+          <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&q=80&w=800" 
+               alt="Neon Beast Build" 
+               class="w-full rounded-3xl border border-white/10 shadow-2xl relative z-10 group-hover:scale-[1.02] transition-transform duration-500 bg-slate-800"
+               onerror="this.onerror=null; this.src=generateFallbackSVG('Build', 'desktop'); this.style.padding='4rem';">
+        </div>
+        
+        <div class="flex-1">
+          <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-6">The <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-brand">Neon Beast</span></h2>
+          <p class="text-slate-400 text-lg mb-8 leading-relaxed">
+            Our expertly crafted Build of the Month. Liquid-cooled, perfectly cable-managed, and tuned for extreme 4K gaming out of the box. 
+          </p>
+          
+          <div class="grid grid-cols-2 gap-4 mb-10">
+            <div class="glass p-4 rounded-2xl border-white/5 hover:border-brand/50 transition-colors">
+              <span class="text-slate-500 text-xs font-bold uppercase">Processor</span>
+              <p class="text-white font-bold mt-1">Intel Core i9-14900K</p>
+            </div>
+            <div class="glass p-4 rounded-2xl border-white/5 hover:border-brand/50 transition-colors">
+              <span class="text-slate-500 text-xs font-bold uppercase">Graphics</span>
+              <p class="text-white font-bold mt-1">RTX 4090 24GB</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-6">
+            <span class="text-4xl font-extrabold text-white">$4,899</span>
+            <button class="btn-shine px-8 py-4 rounded-xl bg-brand hover:bg-brand-glow text-white font-bold transition-all hover:scale-105 shadow-[0_0_20px_rgba(99,102,241,0.4)]">
+              Configure Build
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ALL COMPONENTS (Grid) ========== -->
+  <section id="components" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10 reveal">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-8">
+      <div>
+        <h2 class="text-4xl font-extrabold text-white flex items-center gap-3">
+          <i class="ph ph-cpu text-brand text-4xl drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]"></i> All Components
+        </h2>
+        <p class="text-slate-400 text-base mt-3 font-medium">Filter, find, and add the perfect piece to your rig.</p>
+      </div>
+      
+   <!-- Filter Pills -->
+      <div id="filterPills" class="flex flex-wrap gap-2 lg:justify-end">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
+      <!-- Cards Injected by JS -->
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="bg-[#050B14] border-t border-brand-border/30 pt-20 pb-10 relative overflow-hidden reveal">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="border-t border-slate-800/60 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-slate-500 text-xs font-semibold tracking-wide">© 2026 PULSERIG. ALL RIGHTS RESERVED.</p>
+        <div class="flex gap-6 text-xs font-semibold text-slate-500">
+          <a href="#" class="hover:text-slate-300 transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-slate-300 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== SIDEBAR: CART ========== -->
+  <div id="cartOverlay" class="fixed inset-0 bg-brand-dark/80 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"></div>
+  
+  <div id="cartDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-brand-card/95 backdrop-blur-2xl border-l border-white/10 shadow-[[-20px_0_50px_rgba(0,0,0,0.5)]] z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <!-- Header -->
+    <div class="px-6 py-6 border-b border-white/10 flex items-center justify-between bg-slate-900/50">
+      <h3 class="text-xl font-extrabold text-white flex items-center gap-3">
+        <i class="ph ph-shopping-cart text-brand text-2xl"></i> Your Rig
+      </h3>
+      <button id="cartCloseBtn" class="text-slate-400 hover:text-white transition-colors p-2 rounded-xl bg-slate-800/50 hover:bg-slate-700 border border-transparent hover:border-white/10">
+        <i class="ph ph-x text-xl font-bold"></i>
+      </button>
+    </div>
+    
+    <!-- Free Shipping Progress -->
+    <div class="px-6 py-4 border-b border-white/5 bg-slate-800/30" id="shippingProgressContainer">
+      <div class="flex justify-between text-xs font-bold mb-2">
+        <span class="text-slate-400" id="shippingText">Spend $500 for Free Shipping</span>
+        <span class="text-brand-teal" id="shippingPercent">0%</span>
+      </div>
+      <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-white/5">
+        <div id="shippingBar" class="bg-gradient-to-r from-brand to-brand-teal h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Cart Items -->
+    <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+      <!-- Empty state handled in JS -->
+    </div>
+    
+    <!-- Footer / Checkout -->
+    <div class="p-6 border-t border-white/10 bg-slate-900/80">
+      <div class="flex items-center justify-between mb-6">
+        <span class="text-slate-300 font-bold text-lg">Subtotal</span>
+        <span id="cartTotal" class="text-3xl font-extrabold text-white drop-shadow-md">$0.00</span>
+      </div>
+      <button id="checkoutBtn" disabled class="btn-shine w-full py-4 rounded-xl font-extrabold text-white bg-brand hover:bg-brand-glow transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_-10px_rgba(99,102,241,0.6)] flex items-center justify-center gap-2 group">
+        Proceed to Checkout <i class="ph ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== MODAL PRODUCT DETAILS (90vh Height) ========== -->
+  <div id="productModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 sm:p-6">
+    <!-- Overlay -->
+    <div id="modalOverlay" class="absolute inset-0 bg-brand-dark/90 backdrop-blur-xl opacity-0 transition-opacity duration-300"></div>
+    
+    <!-- Content Container (Fixed 90vh Height) -->
+    <div id="modalContent" class="bg-brand-card border border-white/10 w-full max-w-5xl rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] transform scale-95 opacity-0 transition-all duration-300 relative flex flex-col md:flex-row h-[90vh] max-h-[900px]">
+      
+      <!-- Close Button (Absolute Top Right of Modal) -->
+      <button id="modalCloseBtnDesktop" class="absolute top-4 right-4 z-50 text-slate-400 hover:text-white transition-colors h-10 w-10 bg-brand-dark/50 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10 hover:border-white/30">
+        <i class="ph ph-x text-xl"></i>
+      </button>
+
+      <!-- Image Section -->
+      <div class="h-2/5 md:h-full md:w-1/2 bg-slate-900/80 p-6 sm:p-12 flex flex-col justify-center relative group border-b md:border-b-0 md:border-r border-white/5">
+        <div class="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent pointer-events-none"></div>
+        <img id="modalImg" src="" alt="" class="w-full h-full object-contain drop-shadow-2xl group-hover:scale-105 transition-transform duration-500 relative z-10" onerror="this.onerror=null; this.src=generateFallbackSVG('Error', 'warning');">
+      </div>
+      
+      <!-- Details Section -->
+      <div class="h-3/5 md:h-full md:w-1/2 flex flex-col bg-brand-card relative">
+        <!-- Scrollable Inner Area -->
+        <div class="p-6 sm:p-10 flex-grow overflow-y-auto custom-scrollbar">
+          <span id="modalCategory" class="text-[10px] font-extrabold px-3 py-1.5 rounded-full bg-brand/10 border border-brand/20 text-brand-glow uppercase tracking-widest inline-block mb-4"></span>
+          
+          <h3 id="modalTitle" class="text-3xl sm:text-4xl font-extrabold text-white mb-4 leading-tight tracking-tight"></h3>
+          <p id="modalDesc" class="text-slate-400 text-sm sm:text-base leading-relaxed font-medium mb-8"></p>
+          
+          <div class="grid grid-cols-3 gap-3 mb-8">
+            <div class="text-center p-3 sm:p-4 rounded-2xl bg-slate-800/40 border border-white/5 backdrop-blur-sm">
+              <i class="ph ph-star-fill text-yellow-500 text-2xl mb-2 block"></i>
+              <div id="modalReviews" class="text-xs sm:text-sm text-slate-300 font-bold"></div>
+            </div>
+            <div class="text-center p-3 sm:p-4 rounded-2xl bg-slate-800/40 border border-white/5 backdrop-blur-sm">
+              <i class="ph ph-shopping-bag text-brand-teal text-2xl mb-2 block"></i>
+              <div id="modalBought" class="text-xs sm:text-sm text-slate-300 font-bold"></div>
+            </div>
+            <div class="text-center p-3 sm:p-4 rounded-2xl bg-slate-800/40 border border-white/5 backdrop-blur-sm">
+              <i class="ph ph-shield-check text-green-500 text-2xl mb-2 block"></i>
+              <div class="text-xs sm:text-sm text-slate-300 font-bold">In Stock</div>
+            </div>
+          </div>
+          
+          <div class="space-y-4 mb-4">
+             <h4 class="text-white font-bold text-sm uppercase tracking-wider">Specifications</h4>
+             <ul class="text-sm text-slate-400 space-y-2">
+                <li class="flex justify-between border-b border-white/5 pb-2"><span>Warranty</span> <span class="text-white font-medium">3 Years</span></li>
+                <li class="flex justify-between border-b border-white/5 pb-2"><span>Condition</span> <span class="text-white font-medium">Brand New</span></li>
+                <li class="flex justify-between border-b border-white/5 pb-2"><span>Shipping</span> <span class="text-white font-medium">Ships in 24hrs</span></li>
+             </ul>
+          </div>
+        </div>
+        
+        <!-- Sticky Bottom Action Bar -->
+        <div class="p-6 bg-slate-900/90 border-t border-white/10 backdrop-blur-md shrink-0 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span id="modalPrice" class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 drop-shadow-sm"></span>
+          <button id="modalAddToCartBtn" class="btn-shine w-full sm:w-auto px-8 py-4 rounded-xl bg-brand text-white font-extrabold hover:bg-brand-glow transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(99,102,241,0.4)]">
+            <i class="ph ph-shopping-cart-simple text-xl font-bold"></i> Add to Rig
+          </button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- ========== TOAST NOTIFICATION ========== -->
+  <div id="toast" class="fixed bottom-6 right-6 z-[70] transform translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-4 glass px-6 py-4 rounded-2xl border-l-4 border-l-brand-teal shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5)]">
+    <div class="h-10 w-10 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal border border-brand-teal/30 shadow-[0_0_15px_rgba(20,184,166,0.2)]">
+      <i class="ph ph-check-bold text-lg"></i>
+    </div>
+    <div>
+      <h4 class="text-sm font-bold text-white mb-0.5">Added to Cart</h4>
+      <p id="toastMessage" class="text-xs text-slate-400 font-medium"></p>
+    </div>
+  </div>
+
+  <!-- ========== SCRIPT: LOGIC & RENDERING ========== -->
+  <script>
+    // --- SMART SVG FALLBACK GENERATOR ---
+    window.generateFallbackSVG = function(category, iconName) {
+      const colors = ['#6366f1', '#14b8a6', '#f43f5e', '#eab308', '#8b5cf6'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const initials = category.substring(0, 2).toUpperCase();
+      
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+          <rect width="400" height="400" fill="#0f172a" rx="40"/>
+          <circle cx="200" cy="200" r="120" fill="#1e293b" stroke="${color}" stroke-width="4" stroke-dasharray="20 10"/>
+          <circle cx="200" cy="200" r="100" fill="#030712" />
+          <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="64" font-weight="900" fill="${color}" letter-spacing="4">${initials}</text>
+          <text x="50%" y="68%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="600" fill="#94a3b8" letter-spacing="2">HARDWARE</text>
+        </svg>
+      `;
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- AMBIENT GLOW MOUSE TRACKER ---
+      document.addEventListener('mousemove', (e) => {
+        const glow = document.getElementById('ambient-glow');
+        glow.style.setProperty('--x', `${e.clientX}px`);
+        glow.style.setProperty('--y', `${e.clientY}px`);
+      });
+
+      // --- SEARCH OVERLAY LOGIC ---
+      const searchOpenBtn = document.getElementById('searchOpenBtn');
+      const searchCloseBtn = document.getElementById('searchCloseBtn');
+      const searchOverlay = document.getElementById('searchOverlay');
+      const searchContainer = document.getElementById('searchContainer');
+      
+      function toggleSearch() {
+        const isOpen = !searchOverlay.classList.contains('pointer-events-none');
+        if (isOpen) {
+          searchContainer.classList.remove('translate-y-0', 'opacity-100');
+          searchContainer.classList.add('translate-y-8', 'opacity-0');
+          searchOverlay.classList.replace('opacity-100', 'opacity-0');
+          setTimeout(() => searchOverlay.classList.add('pointer-events-none'), 300);
+          document.body.style.overflow = '';
+        } else {
+          searchOverlay.classList.remove('pointer-events-none');
+          searchOverlay.classList.replace('opacity-0', 'opacity-100');
+          setTimeout(() => {
+            searchContainer.classList.remove('translate-y-8', 'opacity-0');
+            searchContainer.classList.add('translate-y-0', 'opacity-100');
+            searchContainer.querySelector('input').focus();
+          }, 100);
+          document.body.style.overflow = 'hidden';
+        }
+      }
+      
+      searchOpenBtn.addEventListener('click', toggleSearch);
+      searchCloseBtn.addEventListener('click', toggleSearch);
+
+    // --- MOBILE MENU LOGIC ---
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const menuIcon = document.getElementById('menuIcon');
+      let isMenuOpen = false;
+
+      function toggleMobileMenu() {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+          mobileMenu.classList.remove('-translate-y-full');
+          menuIcon.classList.replace('ph-list', 'ph-x');
+          document.body.style.overflow = 'hidden';
+        } else {
+          mobileMenu.classList.add('-translate-y-full');
+          menuIcon.classList.replace('ph-x', 'ph-list');
+          document.body.style.overflow = '';
+        }
+      }
+
+      mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+      
+      // Auto-close menu when clicking a link inside it
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+          if(isMenuOpen) toggleMobileMenu();
+        });
+      });
+
+
+      // --- DATA ---
+      const products = [
+        { id: 1, name: "AMD Ryzen 7 7800X3D", price: 449.99, image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=600", category: "CPU", description: "8-core, 16-thread, 3D V-Cache, perfect for high-end gaming and multi-tasking without thermal throttling.", reviewCount: 312, buyCount: 1280, badge: "Best Seller" },
+        { id: 2, name: "NVIDIA RTX 4080 Super", price: 999.99, image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=600", category: "GPU", description: "16GB GDDR6X, DLSS 3.5, absolute 4K gaming beast with a sleek industrial design.", reviewCount: 567, buyCount: 890, badge: "New Drop" },
+        { id: 3, name: "Corsair Vengeance 32GB DDR5", price: 189.99, image: "https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&q=80&w=600", category: "RAM", description: "6000MHz CL36, dual-channel kit featuring customizable dynamic RGB lighting profiles.", reviewCount: 234, buyCount: 2100, badge: "" },
+        { id: 4, name: "Samsung 990 Pro 2TB NVMe", price: 179.99, image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?auto=format&fit=crop&q=80&w=600", category: "Storage", description: "PCIe 4.0 NVMe, boasting 7450MB/s read speeds for blazing fast system loading times.", reviewCount: 412, buyCount: 1560, badge: "Top Rated" },
+        { id: 5, name: "ASUS ROG Strix Z790-E Gaming", price: 429.99, image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600", category: "Motherboard", description: "Intel Z790 chipset, WiFi 6E, DDR5 support, and PCIe 5.0 ready for future-proofing.", reviewCount: 189, buyCount: 640, badge: "" },
+        { id: 6, name: "Corsair RM850x Shift 80+ Gold", price: 149.99, image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=600", category: "PSU", description: "80+ Gold efficiency, fully modular design with revolutionary side-mounted cable connections.", reviewCount: 276, buyCount: 970, badge: "" },
+        { id: 7, name: "Lian Li O11 Dynamic EVO", price: 169.99, image: "https://images.unsplash.com/photo-1616023707746-880ea8b6038f?auto=format&fit=crop&q=80&w=600", category: "Case", description: "Premium tempered glass panels, dual chamber design allowing for excellent airflow and aesthetics.", reviewCount: 345, buyCount: 830, badge: "" },
+        { id: 8, name: "Arctic Liquid Freezer III", price: 109.99, image: "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?auto=format&fit=crop&q=80&w=600", category: "Cooling", description: "Thick 360mm radiator, improved VRM fan, providing whisper quiet but ultimate cooling power.", reviewCount: 198, buyCount: 550, badge: "Value" }
+      ];
+
+      let cart = [];
+      const FREE_SHIPPING_THRESHOLD = 500;
+
+      // --- SCROLL REVEAL ---
+      const revealElements = document.querySelectorAll('.reveal');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+      revealElements.forEach(el => revealObserver.observe(el));
+
+      // --- UI ELEMENTS ---
+      const productGrid = document.getElementById('productGrid');
+      const filterPills = document.getElementById('filterPills');
+      const cartBadge = document.getElementById('cartBadge');
+      const cartItemsContainer = document.getElementById('cartItemsContainer');
+      const cartTotal = document.getElementById('cartTotal');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+
+      // --- HTML GENERATORS ---
+      function generateCardHTML(prod) {
+        let badgeHTML = '';
+        if (prod.badge) {
+          const badgeColors = prod.badge === 'New Drop' ? 'bg-brand text-white border-brand-glow shadow-[0_0_10px_rgba(99,102,241,0.5)]' : 
+                              prod.badge === 'Best Seller' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                              'bg-brand-teal/20 text-brand-teal border-brand-teal/30';
+          badgeHTML = `<div class="absolute top-4 left-4 z-20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider rounded-full border backdrop-blur-md ${badgeColors}">${prod.badge}</div>`;
+        }
+
+        return `
+          <div class="group flex flex-col bg-slate-900/40 backdrop-blur-sm border border-white/5 rounded-3xl overflow-hidden hover:-translate-y-2 hover:shadow-[0_25px_50px_-15px_rgba(99,102,241,0.25)] hover:border-brand/40 transition-all duration-500 cursor-pointer h-full relative" onclick="openModal(${prod.id})">
+            <div class="absolute inset-0 shimmer-bg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl animate-[shimmer_2s_infinite_linear]"></div>
+            ${badgeHTML}
+            <div class="relative w-full pt-[80%] bg-gradient-to-b from-slate-800/20 to-transparent overflow-hidden flex items-center justify-center p-6">
+              <img src="${prod.image}" alt="${prod.name}" 
+                   class="absolute inset-0 w-full h-full object-contain p-8 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-700 ease-out z-10"
+                   onerror="this.onerror=null; this.src=generateFallbackSVG('${prod.category}', 'cpu');">
+              
+              <div class="absolute inset-0 bg-brand-dark/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center">
+                <span class="px-4 py-2 bg-white/10 border border-white/20 rounded-full text-white text-sm font-bold shadow-lg backdrop-blur-md flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                  <i class="ph ph-eye"></i> Quick View
+                </span>
+              </div>
+            </div>
+            
+            <div class="p-6 flex flex-col flex-grow border-t border-white/5 relative z-30 bg-slate-900/90">
+              <span class="text-[10px] font-extrabold tracking-widest uppercase text-brand-teal mb-2">${prod.category}</span>
+              <h3 class="text-white font-bold text-lg leading-tight line-clamp-2 h-[2.8rem] mb-4">${prod.name}</h3>
+              
+              <div class="mt-auto flex items-center justify-between gap-3 pt-2">
+                <span class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">$${prod.price.toFixed(2)}</span>
+                <button onclick="event.stopPropagation(); addToCart(${prod.id})" 
+                        class="h-12 w-12 rounded-xl bg-slate-800 text-slate-300 hover:bg-brand hover:text-white border border-transparent hover:border-brand-glow hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all duration-300 flex items-center justify-center overflow-hidden group/btn relative shrink-0">
+                   <i class="ph ph-shopping-cart-simple text-xl absolute transition-all duration-300 group-hover/btn:opacity-0 group-hover/btn:-translate-y-4"></i>
+                   <i class="ph ph-plus text-xl absolute opacity-0 translate-y-4 transition-all duration-300 group-hover/btn:opacity-100 group-hover/btn:translate-y-0 font-bold"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderGrid(filter = 'All') {
+        productGrid.innerHTML = '';
+        const filtered = filter === 'All' ? products : products.filter(p => p.category === filter);
+        filtered.forEach(p => {
+          const div = document.createElement('div');
+          div.innerHTML = generateCardHTML(p);
+          const card = div.firstElementChild;
+          card.classList.add('reveal');
+          revealObserver.observe(card);
+          productGrid.appendChild(card);
+        });
+      }
+
+      function renderCategories() {
+        const categories = [...new Set(products.map(p => p.category))];
+        filterPills.innerHTML = `<button onclick="setFilter('All')" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all filter-btn bg-brand text-white border border-brand shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:scale-105 active:scale-95">All Gear</button>`;
+        categories.forEach(cat => {
+          filterPills.insertAdjacentHTML('beforeend', `
+            <button onclick="setFilter('${cat}')" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all filter-btn bg-slate-800/50 text-slate-300 border border-white/10 hover:border-slate-400 hover:text-white hover:scale-105 active:scale-95">${cat}</button>
+          `);
+        });
+      }
+
+      window.setFilter = function(cat) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          if (btn.innerText.trim().includes(cat)) {
+            btn.className = "px-5 py-2.5 rounded-full text-sm font-bold transition-all filter-btn bg-brand text-white border border-brand shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:scale-105 active:scale-95";
+          } else {
+            btn.className = "px-5 py-2.5 rounded-full text-sm font-bold transition-all filter-btn bg-slate-800/50 text-slate-300 border border-white/10 hover:border-slate-400 hover:text-white hover:scale-105 active:scale-95";
+          }
+        });
+        renderGrid(cat);
+      };
+   // --- CART LOGIC ---
+      window.addToCart = function(id) {
+        const prod = products.find(p => p.id === id);
+        const existing = cart.find(item => item.id === id);
+        if (existing) { existing.qty += 1; } 
+        else { cart.push({ ...prod, qty: 1 }); }
+        
+        updateCartUI();
+        showToast(prod.name);
+      };
+
+      window.updateQty = function(id, change) {
+        const item = cart.find(i => i.id === id);
+        if (item) {
+          item.qty += change;
+          if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+        }
+        updateCartUI();
+      }
+
+      function updateCartUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+        let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        
+        if (totalItems > 0) {
+          cartBadge.textContent = totalItems;
+          cartBadge.classList.remove('scale-0'); cartBadge.classList.add('scale-100');
+        } else {
+          cartBadge.classList.remove('scale-100'); cartBadge.classList.add('scale-0');
+        }
+
+        const shippingBar = document.getElementById('shippingBar');
+        const shippingText = document.getElementById('shippingText');
+        const shippingPercent = document.getElementById('shippingPercent');
+        
+        if (totalAmount === 0) {
+          shippingBar.style.width = '0%';
+          shippingText.innerHTML = `Spend $${FREE_SHIPPING_THRESHOLD} for Free Shipping`;
+          shippingPercent.textContent = '0%';
+        } else if (totalAmount < FREE_SHIPPING_THRESHOLD) {
+          const percent = Math.min(100, Math.round((totalAmount / FREE_SHIPPING_THRESHOLD) * 100));
+          const left = (FREE_SHIPPING_THRESHOLD - totalAmount).toFixed(2);
+          shippingBar.style.width = `${percent}%`;
+          shippingBar.className = "bg-gradient-to-r from-brand to-brand-teal h-2 rounded-full transition-all duration-500";
+          shippingText.innerHTML = `Add <span class="text-white font-bold">$${left}</span> for Free Shipping`;
+          shippingPercent.textContent = `${percent}%`;
+        } else {
+          shippingBar.style.width = '100%';
+          shippingBar.className = "bg-gradient-to-r from-green-500 to-emerald-400 h-2 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+          shippingText.innerHTML = `<i class="ph ph-confetti text-green-400"></i> <span class="text-green-400 font-bold">Free Shipping Unlocked!</span>`;
+          shippingPercent.textContent = '';
+        }
+
+        cartItemsContainer.innerHTML = '';
+        if (cart.length === 0) {
+          cartItemsContainer.innerHTML = `
+            <div class="h-full flex flex-col items-center justify-center text-slate-500 text-center pb-10">
+              <div class="h-24 w-24 rounded-full bg-slate-800/30 border border-white/5 flex items-center justify-center mb-6">
+                <i class="ph ph-shopping-cart-simple text-5xl opacity-40"></i>
+              </div>
+              <h4 class="text-white font-bold text-lg mb-2">Your rig is empty</h4>
+              <button onclick="closeCart(); document.getElementById('components').scrollIntoView({behavior:'smooth'})" class="mt-4 px-6 py-3 bg-brand/10 text-brand-glow hover:bg-brand hover:text-white rounded-xl font-bold transition-colors">Start Browsing</button>
+            </div>
+          `;
+          checkoutBtn.disabled = true;
+          cartTotal.textContent = '$0.00';
+          return;
+        }
+
+        cart.forEach((item, index) => {
+          cartItemsContainer.insertAdjacentHTML('beforeend', `
+            <div class="flex gap-4 bg-slate-800/40 p-3 rounded-2xl border border-white/5 items-center animate-fade-in" style="animation-delay: ${index * 50}ms">
+              <div class="w-20 h-20 rounded-xl bg-slate-900 flex items-center justify-center p-2 shrink-0 border border-white/5">
+                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src=generateFallbackSVG('${item.category}', 'cpu');">
+              </div>
+              <div class="flex-grow">
+                <h5 class="text-white font-bold text-sm line-clamp-1 mb-1">${item.name}</h5>
+                <div class="text-brand-glow text-sm font-extrabold">$${item.price.toFixed(2)}</div>
+              </div>
+              <div class="flex flex-col items-center gap-1 bg-slate-900 rounded-xl p-1 shrink-0 border border-white/5 shadow-inner">
+                <button onclick="updateQty(${item.id}, 1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"><i class="ph ph-plus font-bold"></i></button>
+                <span class="text-xs font-bold text-white w-7 text-center">${item.qty}</span>
+                <button onclick="updateQty(${item.id}, -1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"><i class="ph ph-minus font-bold"></i></button>
+              </div>
+            </div>
+          `);
+        });
+
+        cartTotal.textContent = `$${totalAmount.toFixed(2)}`;
+        checkoutBtn.disabled = false;
+      }
+
+      // --- DRAWER OPEN/CLOSE ---
+      const cartDrawer = document.getElementById('cartDrawer');
+      const cartOverlay = document.getElementById('cartOverlay');
+      
+      document.getElementById('cartOpenBtn').addEventListener('click', () => {
+        cartOverlay.classList.remove('hidden'); cartDrawer.classList.remove('translate-x-full');
+        setTimeout(() => cartOverlay.classList.replace('opacity-0', 'opacity-100'), 10);
+        document.body.style.overflow = 'hidden';
+      });
+
+      window.closeCart = function() {
+        cartDrawer.classList.add('translate-x-full'); cartOverlay.classList.replace('opacity-100', 'opacity-0');
+        setTimeout(() => { 
+          cartOverlay.classList.add('hidden'); 
+          if(!isMenuOpen && document.getElementById('searchOverlay').classList.contains('pointer-events-none')) {
+            document.body.style.overflow = ''; 
+          }
+        }, 300);
+      }
+      document.getElementById('cartCloseBtn').addEventListener('click', closeCart);
+      document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
+      // --- MODAL (Fixed 90vh logic) ---
+      window.openModal = function(id) {
+        const prod = products.find(p => p.id === id);
+        if(!prod) return;
+
+        const imgEl = document.getElementById('modalImg');
+        imgEl.src = prod.image;
+        imgEl.onerror = function() { this.onerror=null; this.src=generateFallbackSVG(prod.category, 'cpu'); };
+        
+        document.getElementById('modalCategory').textContent = prod.category;
+        document.getElementById('modalTitle').textContent = prod.name;
+        document.getElementById('modalDesc').textContent = prod.description;
+        document.getElementById('modalReviews').textContent = prod.reviewCount.toLocaleString();
+        document.getElementById('modalBought').textContent = prod.buyCount.toLocaleString();
+        document.getElementById('modalPrice').textContent = `$${prod.price.toFixed(2)}`;
+        
+        document.getElementById('modalAddToCartBtn').onclick = () => { addToCart(prod.id); closeModal(); };
+
+        const modal = document.getElementById('productModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        setTimeout(() => {
+          modalOverlay.classList.replace('opacity-0', 'opacity-100');
+          modalContent.classList.replace('scale-95', 'scale-100');
+          modalContent.classList.replace('opacity-0', 'opacity-100');
+        }, 10);
+      };
+
+      window.closeModal = function() {
+        const modal = document.getElementById('productModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+
+        modalOverlay.classList.replace('opacity-100', 'opacity-0');
+        modalContent.classList.replace('scale-100', 'scale-95');
+        modalContent.classList.replace('opacity-100', 'opacity-0');
+        
+        setTimeout(() => { 
+          modal.classList.add('hidden'); 
+          if (document.getElementById('cartOverlay').classList.contains('hidden') && !isMenuOpen) {
+            document.body.style.overflow = ''; 
+          }
+        }, 300);
+      };
+
+      document.getElementById('modalCloseBtnDesktop').addEventListener('click', closeModal);
+      document.getElementById('modalOverlay').addEventListener('click', closeModal);
+
+      // --- TOAST ---
+      let toastTimeout;
+      function showToast(name) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').textContent = name;
+        toast.classList.remove('translate-y-24', 'opacity-0');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3000);
+      }
+
+      // Initialize
+      renderCategories();
+      renderGrid();
+      updateCartUI();
+    });
+  </script>
+</body>
+</html>
+
+
